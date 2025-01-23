@@ -1,3 +1,5 @@
+import os, sys
+
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 num = {}
 num["0"] = ["░█████╗░", "██╔══██╗", "██║░░██║", "██║░░██║", "╚█████╔╝", "░╚════╝░"]
@@ -19,12 +21,35 @@ char["A"] = ["░█████╗░", "██╔══██╗", "███�
 char["M"] = ["███╗░░░███╗", "████╗░████║", "██╔████╔██║", "██║╚██╔╝██║", "██║░╚═╝░██║", "╚═╝░░░░░╚═╝"]
 char[" "] = ["░░░", "░░░", "░░░", "░░░", "░░░", "░░░"]
 
+def setCursorPos(x=0, y=0):
+    sys.stdout.write("\033[{};{}H".format(y, x))
+    sys.stdout.write("\033[K")
+    sys.stdout.flush()
 
-def printBig(str):
+def getLength(str):
+    length = 0
+    for y in str:
+        if y in numbers:
+            length = length + len(num[y][0])
+        elif y in characters:
+            length = length + len(char[y][0])
+    return length
+
+def printBig(time, date):
+    w, h = os.get_terminal_size()
+    hBufferSize = int((h-7)/2)
+    wBufferSize = int((w-getLength(time))/2)
+    wBuffer = ""
+    for x in range(wBufferSize):
+        wBuffer = f"{wBuffer} "
+    setCursorPos(1, hBufferSize)
     for x in range(6):
-        for y in str:
+        print(wBuffer, end="")
+        for y in time:
             if y in numbers:
                 print(num[y][x], end="")
-            if y in characters:
+            elif y in characters:
                 print(char[y][x], end="")
         print()
+    print(f"{wBuffer}{date}")
+    setCursorPos(1, 1)
